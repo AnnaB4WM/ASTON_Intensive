@@ -1,0 +1,79 @@
+package org.api_app_with_patterns.userservice;
+
+import org.api_app_with_patterns.userservice.dto.UserDTO;
+import org.api_app_with_patterns.userservice.entity.User;
+import org.api_app_with_patterns.userservice.repositories.UserRepository;
+import org.api_app_with_patterns.userservice.services.UserServiceImpl;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+public class UserServiceApplicationTest {
+
+    private final UserRepository userRepository =
+            Mockito.mock(UserRepository.class);
+
+    private final UserServiceImpl userServiceImpl =
+            new UserServiceImpl(userRepository);
+
+    @Test
+    @DisplayName("Тестирование метода getUserById")
+    public void testGetUserById() {
+        Long userId = 1L;
+        User user = new User();
+        user.setId(userId);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        UserDTO userDTO = userServiceImpl.getUserById(userId);
+        assertEquals(userId, userDTO.getId());
+        verify(userRepository, times(1)).findById(userId);
+    }
+
+    @Test
+    @DisplayName("Тестирование метода getAllUsers")
+    public void testGetAllUsers() {
+        List<User> users = new ArrayList<>();
+        User user = new User();
+        user.setId(1L);
+        users.add(user);
+        when(userRepository.findAll()).thenReturn(users);
+        Collection<UserDTO> userDTOs = userServiceImpl.getAllUsers();
+        assertEquals(users.size(), userDTOs.size());
+        verify(userRepository, times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("Тестирование метода createUser")
+    public void testCreateUser() {
+        UserDTO userDTO = new UserDTO();
+        userServiceImpl.createUser(userDTO);
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Тестирование метода updateUser")
+    public void testUpdateUser() {
+        Long userId = 1L;
+        UserDTO userDTO = new UserDTO();
+        User user = new User();
+        user.setId(userId);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        userServiceImpl.updateUser(userId, userDTO);
+        verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Тестирование метода deleteUser")
+    public void testDeleteUser() {
+        Long userId = 1L;
+        userServiceImpl.deleteUser(userId);
+        verify(userRepository, times(1)).deleteById(userId);
+    }
+}

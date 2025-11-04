@@ -1,0 +1,50 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+
+spring:
+  cloud:
+    gateway:
+      forwarded:
+        enabled: false
+      httpclient:
+        connect-timeout: 2000
+        response-timeout: 5s
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**
+          filters:
+            - CircuitBreaker=name=userServiceCB,fallbackUri=forward:/fallback/users
+        - id: root-redirect
+          uri: no://op
+          predicates:
+            - Path=/
+          filters:
+            - RedirectTo=302,/actuator
+eureka:
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    non-secure-port: 8080
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      userServiceCB:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20
+        minimumNumberOfCalls: 10
+        failureRateThreshold: 50
+        slowCallRateThreshold: 100
+        slowCallDurationThreshold: 2s
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+  timelimiter:
+    instances:
+      userServiceCB:
+        timeoutDuration: 3s
