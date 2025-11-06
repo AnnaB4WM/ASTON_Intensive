@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.api_app_user_service</groupId>
+    <artifactId>module-8-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Module 8 Parent</name>
+    <description>Aggregator POM to build all microservices</description>
+
+    <properties>
+        <maven.compiler.release>17</maven.compiler.release>
+    </properties>
+
+    <modules>
+        <module>ApiGateway</module>
+        <module>ConfigServer</module>
+        <module>DiscoveryService</module>
+        <module>UserService</module>
+        <module>NotificationService</module>
+    </modules>
+
+</project>
