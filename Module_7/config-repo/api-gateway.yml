@@ -4,6 +4,12 @@ management:
       exposure:
         include: health,info,gateway
 
+server:
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
+    min-response-size: 1024
+
 spring:
   cloud:
     gateway:
@@ -25,6 +31,11 @@ spring:
             - Path=/
           filters:
             - RedirectTo=302,/actuator
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+
 eureka:
   instance:
     prefer-ip-address: true
